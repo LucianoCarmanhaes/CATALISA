@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#00642c">
+  <meta name="description" content="CATALISA — gestão de ações, cronograma e resultados da Botuverá.">
+  <title>CATALISA | Botuverá</title>
+  <link rel="icon" href="/assets/logo-catalisa.png">
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <section id="loading-view" class="center-screen">
+    <div class="spinner" aria-label="Carregando"></div>
+  </section>
+
+  <section id="setup-view" class="center-screen hidden">
+    <article class="auth-card">
+      <img class="auth-logo" src="/assets/logo-catalisa.png" alt="CATALISA Botuverá">
+      <h1>Configuração pendente</h1>
+      <p>Conecte o projeto ao Supabase antes de acessar. As instruções estão no arquivo README.</p>
+    </article>
+  </section>
+
+  <section id="auth-view" class="auth-page hidden">
+    <article class="auth-card">
+      <img class="auth-logo" src="/assets/logo-catalisa.png" alt="CATALISA Botuverá">
+      <div class="auth-copy">
+        <span class="eyebrow">Acesso restrito</span>
+        <h1>Entre no CATALISA</h1>
+        <p>Use seu e-mail e sua senha individual para acessar o programa.</p>
+      </div>
+      <form id="login-form" class="form-stack">
+        <label>E-mail<input id="login-email" type="email" autocomplete="email" required placeholder="nome@botuvera.com.br"></label>
+        <label>Senha<input id="login-password" type="password" autocomplete="current-password" required minlength="6" placeholder="••••••••"></label>
+        <button class="button primary" type="submit">Entrar</button>
+        <button class="link-button" id="forgot-password" type="button">Esqueci minha senha</button>
+      </form>
+      <form id="new-password-form" class="form-stack hidden">
+        <label>Nova senha<input id="new-password" type="password" autocomplete="new-password" required minlength="6" placeholder="Mínimo de 6 caracteres"></label>
+        <button class="button primary" type="submit">Salvar nova senha</button>
+      </form>
+      <p class="auth-note">Acesso permitido somente a usuários autorizados.</p>
+    </article>
+  </section>
+
+  <main id="app-view" class="app-shell hidden">
+    <aside class="sidebar" id="sidebar">
+      <div class="brand"><img src="/assets/logo-catalisa.png" alt="CATALISA Botuverá"></div>
+      <nav class="nav" aria-label="Navegação principal">
+        <button class="nav-item active" data-view="overview"><span>▦</span>Visão geral</button>
+        <button class="nav-item" data-view="schedule"><span>▣</span>Cronograma</button>
+        <button class="nav-item" data-view="actions"><span>✓</span>Ações</button>
+        <button class="nav-item" data-view="results"><span>↗</span>Resultados</button>
+      </nav>
+      <div class="cycle-card">
+        <small>Ciclo atual</small><strong>Programa Catalisa</strong>
+        <div class="progress-track"><i id="sidebar-progress"></i></div>
+        <small id="sidebar-progress-label">0% concluído</small>
+      </div>
+    </aside>
+
+    <section class="workspace">
+      <header class="topbar">
+        <button id="menu-button" class="icon-button mobile-only" aria-label="Abrir menu">☰</button>
+        <div><span class="eyebrow">Programa Catalisa</span><h1 id="page-title">Visão geral</h1></div>
+        <div class="user-area"><span id="user-email"></span><button id="logout-button" class="icon-button" title="Sair" aria-label="Sair">↪</button></div>
+      </header>
+      <div id="toast" class="toast hidden" role="status"></div>
+      <div id="error-banner" class="error-banner hidden" role="alert"></div>
+
+      <div class="content">
+        <section id="view-overview" class="view active">
+          <div class="intro"><div><span class="eyebrow">Operação</span><h2>Visão geral do programa</h2><p>Acompanhe o avanço das iniciativas em um só lugar.</p></div><button class="button primary open-action">+ Nova ação</button></div>
+          <div class="kpi-grid">
+            <article class="kpi"><span>Ações concluídas</span><strong id="kpi-complete">0</strong><small id="kpi-total">de 0 cadastradas</small></article>
+            <article class="kpi"><span>Progresso do ciclo</span><strong id="kpi-progress">0%</strong><small>calculado pelas ações</small></article>
+            <article class="kpi"><span>Economia estimada</span><strong id="kpi-savings">R$ 0</strong><small>somatório das iniciativas</small></article>
+            <article class="kpi"><span>Pessoas envolvidas</span><strong id="kpi-people">0</strong><small>responsáveis cadastrados</small></article>
+          </div>
+          <div class="overview-grid">
+            <article class="card"><div class="section-head"><h3>Avanço por pilar</h3><p>Ações marcadas como Todos entram nos três pilares.</p></div><div id="pillar-progress" class="pillar-list"></div></article>
+            <article class="card empty-compact"><div class="round-icon">▣</div><h3 id="schedule-summary">Nenhum prazo cadastrado</h3><p id="schedule-summary-copy">As datas aparecerão após a criação das ações.</p><button class="button secondary" data-go="schedule">Abrir cronograma</button></article>
+          </div>
+        </section>
+
+        <section id="view-schedule" class="view">
+          <div class="intro"><div><span class="eyebrow">Planejamento</span><h2>Cronograma</h2><p>Prazos gerados pelas ações cadastradas.</p></div><button class="button primary open-action">+ Nova ação</button></div>
+          <article class="card"><div class="section-head"><h3>Próximas entregas</h3><p id="schedule-count">0 itens no cronograma</p></div><div id="schedule-list" class="record-list"></div></article>
+        </section>
+
+        <section id="view-actions" class="view">
+          <div class="intro"><div><span class="eyebrow">Execução</span><h2>Acompanhamento de ações</h2><p>Crie, filtre, atualize ou exclua iniciativas.</p></div><button class="button primary open-action">+ Nova ação</button></div>
+          <article class="card">
+            <div class="toolbar"><input id="action-search" type="search" placeholder="Buscar ação, responsável ou observação"><select id="pillar-filter"><option value="Qualquer">Todos os registros</option><option value="Todos">Todos os pilares</option><option>Evolução</option><option>Desenvolvimento</option><option>Finanças</option></select></div>
+            <div id="actions-list" class="record-list"></div>
+          </article>
+        </section>
+
+        <section id="view-results" class="view">
+          <div class="intro"><div><span class="eyebrow">Indicadores</span><h2>Resultados financeiros</h2><p>Registre orçamento, realizado e headcount por período.</p></div><button class="button primary" id="open-finance">+ Novo lançamento</button></div>
+          <div class="kpi-grid">
+            <article class="kpi"><span>Orçado</span><strong id="finance-budget">R$ 0</strong><small>total registrado</small></article>
+            <article class="kpi"><span>Realizado</span><strong id="finance-actual">R$ 0</strong><small>total registrado</small></article>
+            <article class="kpi"><span>Saldo</span><strong id="finance-balance">R$ 0</strong><small id="finance-balance-note">abaixo do orçamento</small></article>
+            <article class="kpi"><span>Headcount</span><strong id="finance-headcount">0</strong><small>soma dos lançamentos</small></article>
+          </div>
+          <article class="card"><div class="section-head"><h3>Lançamentos</h3><p id="finance-count">0 registros financeiros</p></div><div class="table-wrap"><table><thead><tr><th>Período</th><th>Centro</th><th>Orçado</th><th>Realizado</th><th>Headcount</th><th>Observação</th><th></th></tr></thead><tbody id="finance-table"></tbody></table></div><div id="finance-empty"></div></article>
+        </section>
+      </div>
+    </section>
+  </main>
+
+  <dialog id="action-dialog">
+    <form id="action-form" class="modal-form">
+      <div class="modal-head"><div><h2>Nova ação</h2><p>Selecione Todos quando envolver os três pilares.</p></div><button type="button" class="close-dialog icon-button">×</button></div>
+      <label>Ação<input name="title" required></label>
+      <div class="form-grid"><label>Pilar<select name="pillar"><option value="Todos">Todos os pilares</option><option>Evolução</option><option>Desenvolvimento</option><option>Finanças</option></select></label><label>Prazo<input name="due" type="date" required></label></div>
+      <label>Responsável<input name="owner" required></label>
+      <label>Economia estimada (R$)<input name="impact" type="number" min="0" step="0.01" value="0"></label>
+      <label>Observação<textarea name="observation" rows="3" placeholder="Contexto, dependências ou informações adicionais"></textarea></label>
+      <div class="modal-actions"><button type="button" class="button secondary close-dialog">Cancelar</button><button class="button primary" type="submit">Criar ação</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="finance-dialog">
+    <form id="finance-form" class="modal-form">
+      <div class="modal-head"><div><h2>Novo lançamento financeiro</h2><p>Informe os valores consolidados do período.</p></div><button type="button" class="close-dialog icon-button">×</button></div>
+      <div class="form-grid"><label>Período<input name="period" type="month" required></label><label>Centro de responsabilidade<input name="cost_center" required></label></div>
+      <div class="form-grid"><label>Orçado (R$)<input name="budget" type="number" min="0" step="0.01" required></label><label>Realizado (R$)<input name="actual" type="number" min="0" step="0.01" required></label></div>
+      <label>Headcount<input name="headcount" type="number" min="0" step="1" value="0"></label>
+      <label>Observação<textarea name="observation" rows="3" placeholder="Detalhes e justificativas do lançamento"></textarea></label>
+      <div class="modal-actions"><button type="button" class="button secondary close-dialog">Cancelar</button><button class="button primary" type="submit">Salvar</button></div>
+    </form>
+  </dialog>
+
+  <script type="module" src="/app.js"></script>
+</body>
+</html>
