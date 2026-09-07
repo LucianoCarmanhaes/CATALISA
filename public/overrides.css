@@ -58,7 +58,60 @@
   height: 20px;
   fill: none;
   stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.auth-logo,
+.brand img {
+  object-fit: contain;
+  border-radius: 50%;
+  clip-path: circle(38% at 50% 50%);
+}
+
+.record {
+  grid-template-columns: 1.25fr .65fr 135px 88px;
+}
+
+.record-actions {
+  display: flex;
+  gap: 7px;
+  justify-content: flex-end;
+}
+
+.edit {
+  width: 40px;
+  height: 40px;
+  padding: 9px;
+  display: inline-grid;
+  place-items: center;
+  border: 1px solid #b9dbc6;
+  border-radius: 9px;
+  background: #eff9f2;
+  color: #00642c;
+}
+
+.edit svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
   stroke-width: 1.9;
   stroke-linecap: round;
   stroke-linejoin: round;
+}
+
+.edit:hover {
+  background: #dff2e5;
+  border-color: #86bf9a;
+}
+
+@media (max-width: 1050px) {
+  .record { grid-template-columns: 1fr 150px 88px; }
+}
+
+@media (max-width: 780px) {
+  .record { grid-template-columns: 1fr; }
+  .record-actions { justify-self: end; }
 }
