@@ -16,10 +16,11 @@ let finances = [];
 let activeView = 'overview';
 
 const money = value => new Intl.NumberFormat('pt-BR', { style:'currency', currency:'BRL', maximumFractionDigits:0 }).format(Number(value || 0));
-const dateBR = value => value ? new Intl.DateTimeFormat('pt-BR', { day:'2-digit', month:'short', year:'numeric' }).format(new Date(`${value}T12:00:00`)).replace('.', '') : 'Sem data';
+const dateBR = value => value ? new Intl.DateTimeFormat('pt-BR', { day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' }).format(new Date(value.length===10?`${value}T12:00:00`:value)).replace('.', '') : 'Sem data';
 const safe = value => String(value ?? '').replace(/[&<>'"]/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[char]));
 const show = id => $(`#${id}`).classList.remove('hidden');
 const hide = id => $(`#${id}`).classList.add('hidden');
+const trashIcon = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3m-9 0 1 14h10l1-14M10 11v6m4-6v6"/></svg>';
 
 document.body.append($('#toast'), $('#error-banner'));
 function flash(message){ const el=$('#toast'); el.textContent=`✓ ${message}`; el.classList.remove('hidden'); clearTimeout(flash.timer); flash.timer=setTimeout(()=>el.classList.add('hidden'),3000); }
@@ -62,6 +63,7 @@ function bindEvents(){
   $('#forgot-password').addEventListener('click',forgotPassword);
   $('#new-password-form').addEventListener('submit',setNewPassword);
   $$('.password-toggle').forEach(button=>button.addEventListener('click',()=>togglePassword(button)));
+  $$('.password-toggle').forEach(button=>button.addEventListener('click',()=>togglePassword(button)));
   $('#logout-button').addEventListener('click',()=>supabase.auth.signOut());
   $$('.nav-item').forEach(button=>button.addEventListener('click',()=>switchView(button.dataset.view)));
   $$('[data-go]').forEach(button=>button.addEventListener('click',()=>switchView(button.dataset.go)));
@@ -79,6 +81,14 @@ function bindEvents(){
     if(target.dataset.action==='delete-action') deleteAction(target.dataset.id);
     if(target.dataset.action==='delete-finance') deleteFinance(target.dataset.id);
   });
+}
+
+function togglePassword(button){
+  const input=$(`#${button.dataset.passwordTarget}`); const showing=input.type==='text';
+  input.type=showing?'password':'text';
+  button.classList.toggle('showing',!showing);
+  button.setAttribute('aria-label',showing?'Mostrar senha':'Ocultar senha');
+  button.title=showing?'Mostrar senha':'Ocultar senha';
 }
 
 function togglePassword(button){
@@ -113,9 +123,9 @@ function switchView(view){
 
 async function createAction(event){
   event.preventDefault(); const form=event.currentTarget; const data=new FormData(form); setBusy(form,true);
-  const payload={title:data.get('title').trim(),pillar:data.get('pillar'),owner:data.get('owner').trim(),due:data.get('due'),impact:Number(data.get('impact')||0),observation:data.get('observation').trim(),status:'Não iniciada',progress:0,created_by:session.user.id};
+  const payload={title:data.get('title').trim(),pillar:data.get('pillar'),owner:data.get('owner').trim(),due:new Date(data.get('due')).toISOString(),impact:Number(data.get('impact')||0),observation:data.get('observation').trim(),status:'Não iniciada',progress:0,created_by:session.user.id};
   const {data:created,error:dbError}=await supabase.from('actions').insert(payload).select().single(); setBusy(form,false);
-  if(dbError){error('Não foi possível criar a ação.');return;} actions.push(created); actions.sort((a,b)=>a.due.localeCompare(b.due)); form.reset(); form.pillar.value='Todos'; form.impact.value='0'; $('#action-dialog').close(); renderAll(); flash('Ação criada com sucesso.');
+  if(dbError){error('Não foi possível criar a ação.');return;} actions.push(created); actions.sort((a,b)=>new Date(a.due)-new Date(b.due)); form.reset(); form.pillar.value='Todos'; form.impact.value='0'; $('#action-dialog').close(); renderAll(); flash('Ação criada com sucesso.');
 }
 async function advanceAction(id){
   const item=actions.find(x=>x.id===id); if(!item)return; const status=statuses[(statuses.indexOf(item.status)+1)%statuses.length]; const progress={"Não iniciada":0,"Em andamento":50,"Atenção":25,"Concluída":100}[status];
@@ -150,12 +160,12 @@ function renderSchedule(){
 }
 function renderActions(){
   const query=$('#action-search').value.toLowerCase(); const filter=$('#pillar-filter').value; const filtered=actions.filter(a=>(filter==='Qualquer'||a.pillar===filter)&&`${a.title} ${a.owner} ${a.observation}`.toLowerCase().includes(query));
-  $('#actions-list').innerHTML=filtered.length?filtered.map(a=>`<article class="record"><div><h4>${safe(a.title)}</h4><p>${safe(a.pillar)} • ${safe(a.owner)} • ${dateBR(a.due)}</p>${a.observation?`<p class="observation">${safe(a.observation)}</p>`:''}</div><div class="record-progress"><span>Progresso: ${a.progress}%</span><div class="bar"><i style="width:${a.progress}%"></i></div></div><button class="status" data-action="advance" data-id="${a.id}" data-status="${safe(a.status)}" title="Clique para mudar o status">${safe(a.status)}</button><button class="delete" data-action="delete-action" data-id="${a.id}" aria-label="Excluir ação">⌫</button></article>`).join(''):empty('Nenhuma ação encontrada','Crie uma ação ou ajuste os filtros.');
+  $('#actions-list').innerHTML=filtered.length?filtered.map(a=>`<article class="record"><div><h4>${safe(a.title)}</h4><p>${safe(a.pillar)} • ${safe(a.owner)} • ${dateBR(a.due)}</p>${a.observation?`<p class="observation">${safe(a.observation)}</p>`:''}</div><div class="record-progress"><span>Progresso: ${a.progress}%</span><div class="bar"><i style="width:${a.progress}%"></i></div></div><button class="status" data-action="advance" data-id="${a.id}" data-status="${safe(a.status)}" title="Clique para mudar o status">${safe(a.status)}</button><button class="delete" data-action="delete-action" data-id="${a.id}" title="Excluir ação" aria-label="Excluir ação">${trashIcon}</button></article>`).join(''):empty('Nenhuma ação encontrada','Crie uma ação ou ajuste os filtros.');
 }
 function renderFinances(){
   const budget=finances.reduce((s,x)=>s+Number(x.budget),0),actual=finances.reduce((s,x)=>s+Number(x.actual),0),balance=budget-actual,headcount=finances.reduce((s,x)=>s+Number(x.headcount),0);
   $('#finance-budget').textContent=money(budget);$('#finance-actual').textContent=money(actual);$('#finance-balance').textContent=money(balance);$('#finance-balance-note').textContent=balance>=0?'abaixo do orçamento':'acima do orçamento';$('#finance-headcount').textContent=headcount;$('#finance-count').textContent=`${finances.length} ${finances.length===1?'registro financeiro':'registros financeiros'}`;
-  $('#finance-table').innerHTML=finances.map(f=>`<tr><td>${safe(f.period)}</td><td><strong>${safe(f.cost_center)}</strong></td><td>${money(f.budget)}</td><td>${money(f.actual)}</td><td>${f.headcount}</td><td>${safe(f.observation)||'—'}</td><td><button class="delete" data-action="delete-finance" data-id="${f.id}" aria-label="Excluir lançamento">⌫</button></td></tr>`).join('');
+  $('#finance-table').innerHTML=finances.map(f=>`<tr><td>${safe(f.period)}</td><td><strong>${safe(f.cost_center)}</strong></td><td>${money(f.budget)}</td><td>${money(f.actual)}</td><td>${f.headcount}</td><td>${safe(f.observation)||'—'}</td><td><button class="delete" data-action="delete-finance" data-id="${f.id}" title="Excluir lançamento" aria-label="Excluir lançamento">${trashIcon}</button></td></tr>`).join('');
   $('#finance-empty').innerHTML=finances.length?'':empty('Nenhum resultado registrado','Adicione o primeiro lançamento financeiro.');
 }
 
