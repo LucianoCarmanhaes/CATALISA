@@ -1,4 +1,3 @@
-document.body.append($('#toast'), $('#error-banner'));
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
 import { SUPABASE_URL, SUPABASE_ANON_KEY } from './app-config.js';
 
@@ -22,6 +21,7 @@ const safe = value => String(value ?? '').replace(/[&<>'"]/g, char => ({'&':'&am
 const show = id => $(`#${id}`).classList.remove('hidden');
 const hide = id => $(`#${id}`).classList.add('hidden');
 
+document.body.append($('#toast'), $('#error-banner'));
 function flash(message){ const el=$('#toast'); el.textContent=`✓ ${message}`; el.classList.remove('hidden'); clearTimeout(flash.timer); flash.timer=setTimeout(()=>el.classList.add('hidden'),3000); }
 function error(message){ const el=$('#error-banner'); el.textContent=message; el.classList.remove('hidden'); clearTimeout(error.timer); error.timer=setTimeout(()=>el.classList.add('hidden'),5000); }
 function setBusy(form, busy){ $$('button,input,select,textarea',form).forEach(el=>el.disabled=busy); }
