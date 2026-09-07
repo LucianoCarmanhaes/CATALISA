@@ -17,10 +17,12 @@ let activeView = 'overview';
 
 const money = value => new Intl.NumberFormat('pt-BR', { style:'currency', currency:'BRL', maximumFractionDigits:0 }).format(Number(value || 0));
 const dateBR = value => value ? new Intl.DateTimeFormat('pt-BR', { day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' }).format(new Date(value.length===10?`${value}T12:00:00`:value)).replace('.', '') : 'Sem data';
+const dateTimeInput = value => { const date=new Date(value); return Number.isNaN(date.getTime())?'':new Date(date.getTime()-date.getTimezoneOffset()*60000).toISOString().slice(0,16); };
 const safe = value => String(value ?? '').replace(/[&<>'"]/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[char]));
 const show = id => $(`#${id}`).classList.remove('hidden');
 const hide = id => $(`#${id}`).classList.add('hidden');
 const trashIcon = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3m-9 0 1 14h10l1-14M10 11v6m4-6v6"/></svg>';
+const editIcon = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4l11-11-4-4L4 16v4Zm9.5-13.5 4 4M13 20h7"/></svg>';
 
 document.body.append($('#toast'), $('#error-banner'));
 function flash(message){ const el=$('#toast'); el.textContent=`✓ ${message}`; el.classList.remove('hidden'); clearTimeout(flash.timer); flash.timer=setTimeout(()=>el.classList.add('hidden'),3000); }
@@ -66,10 +68,10 @@ function bindEvents(){
   $('#logout-button').addEventListener('click',()=>supabase.auth.signOut());
   $$('.nav-item').forEach(button=>button.addEventListener('click',()=>switchView(button.dataset.view)));
   $$('[data-go]').forEach(button=>button.addEventListener('click',()=>switchView(button.dataset.go)));
-  $$('.open-action').forEach(button=>button.addEventListener('click',()=>$('#action-dialog').showModal()));
+  $$('.open-action').forEach(button=>button.addEventListener('click',()=>openActionDialog()));
   $('#open-finance').addEventListener('click',()=>$('#finance-dialog').showModal());
   $$('.close-dialog').forEach(button=>button.addEventListener('click',()=>button.closest('dialog').close()));
-  $('#action-form').addEventListener('submit',createAction);
+  $('#action-form').addEventListener('submit',saveAction);
   $('#finance-form').addEventListener('submit',createFinance);
   $('#action-search').addEventListener('input',renderActions);
   $('#pillar-filter').addEventListener('change',renderActions);
@@ -77,6 +79,7 @@ function bindEvents(){
   document.addEventListener('click',event=>{
     const target=event.target.closest('[data-action]'); if(!target)return;
     if(target.dataset.action==='advance') advanceAction(target.dataset.id);
+    if(target.dataset.action==='edit-action') openActionDialog(actions.find(item=>item.id===target.dataset.id));
     if(target.dataset.action==='delete-action') deleteAction(target.dataset.id);
     if(target.dataset.action==='delete-finance') deleteFinance(target.dataset.id);
   });
@@ -112,11 +115,21 @@ function switchView(view){
   const titles={overview:'Visão geral',schedule:'Cronograma',actions:'Ações',results:'Resultados'}; $('#page-title').textContent=titles[view]; $('#sidebar').classList.remove('open');
 }
 
-async function createAction(event){
+function openActionDialog(item=null){
+  const form=$('#action-form'); const fields=form.elements; form.reset(); form.dataset.editingId=item?.id || ''; fields.pillar.value=item?.pillar || 'Todos'; fields.impact.value=item?.impact ?? '0';
+  if(item){ fields.title.value=item.title; fields.owner.value=item.owner; fields.due.value=dateTimeInput(item.due); fields.observation.value=item.observation || ''; }
+  $('#action-dialog-title').textContent=item?'Editar ação':'Nova ação'; $('#action-submit').textContent=item?'Salvar alterações':'Criar ação'; $('#action-dialog').showModal();
+}
+
+async function saveAction(event){
   event.preventDefault(); const form=event.currentTarget; const data=new FormData(form); setBusy(form,true);
-  const payload={title:data.get('title').trim(),pillar:data.get('pillar'),owner:data.get('owner').trim(),due:new Date(data.get('due')).toISOString(),impact:Number(data.get('impact')||0),observation:data.get('observation').trim(),status:'Não iniciada',progress:0,created_by:session.user.id};
-  const {data:created,error:dbError}=await supabase.from('actions').insert(payload).select().single(); setBusy(form,false);
-  if(dbError){error('Não foi possível criar a ação.');return;} actions.push(created); actions.sort((a,b)=>new Date(a.due)-new Date(b.due)); form.reset(); form.pillar.value='Todos'; form.impact.value='0'; $('#action-dialog').close(); renderAll(); flash('Ação criada com sucesso.');
+  const editingId=form.dataset.editingId; const payload={title:data.get('title').trim(),pillar:data.get('pillar'),owner:data.get('owner').trim(),due:new Date(data.get('due')).toISOString(),impact:Number(data.get('impact')||0),observation:data.get('observation').trim()};
+  let result;
+  if(editingId) result=await supabase.from('actions').update(payload).eq('id',editingId).select().single();
+  else result=await supabase.from('actions').insert({...payload,status:'Não iniciada',progress:0,created_by:session.user.id}).select().single();
+  setBusy(form,false); if(result.error){error(editingId?'Não foi possível salvar as alterações.':'Não foi possível criar a ação.');return;}
+  if(editingId) actions=actions.map(item=>item.id===editingId?result.data:item); else actions.push(result.data);
+  actions.sort((a,b)=>new Date(a.due)-new Date(b.due)); form.reset(); form.dataset.editingId=''; $('#action-dialog').close(); renderAll(); flash(editingId?'Ação atualizada com sucesso.':'Ação criada com sucesso.');
 }
 async function advanceAction(id){
   const item=actions.find(x=>x.id===id); if(!item)return; const status=statuses[(statuses.indexOf(item.status)+1)%statuses.length]; const progress={"Não iniciada":0,"Em andamento":50,"Atenção":25,"Concluída":100}[status];
@@ -151,7 +164,7 @@ function renderSchedule(){
 }
 function renderActions(){
   const query=$('#action-search').value.toLowerCase(); const filter=$('#pillar-filter').value; const filtered=actions.filter(a=>(filter==='Qualquer'||a.pillar===filter)&&`${a.title} ${a.owner} ${a.observation}`.toLowerCase().includes(query));
-  $('#actions-list').innerHTML=filtered.length?filtered.map(a=>`<article class="record"><div><h4>${safe(a.title)}</h4><p>${safe(a.pillar)} • ${safe(a.owner)} • ${dateBR(a.due)}</p>${a.observation?`<p class="observation">${safe(a.observation)}</p>`:''}</div><div class="record-progress"><span>Progresso: ${a.progress}%</span><div class="bar"><i style="width:${a.progress}%"></i></div></div><button class="status" data-action="advance" data-id="${a.id}" data-status="${safe(a.status)}" title="Clique para mudar o status">${safe(a.status)}</button><button class="delete" data-action="delete-action" data-id="${a.id}" title="Excluir ação" aria-label="Excluir ação">${trashIcon}</button></article>`).join(''):empty('Nenhuma ação encontrada','Crie uma ação ou ajuste os filtros.');
+  $('#actions-list').innerHTML=filtered.length?filtered.map(a=>`<article class="record"><div><h4>${safe(a.title)}</h4><p>${safe(a.pillar)} • ${safe(a.owner)} • ${dateBR(a.due)}</p>${a.observation?`<p class="observation">${safe(a.observation)}</p>`:''}</div><div class="record-progress"><span>Progresso: ${a.progress}%</span><div class="bar"><i style="width:${a.progress}%"></i></div></div><button class="status" data-action="advance" data-id="${a.id}" data-status="${safe(a.status)}" title="Clique para mudar o status">${safe(a.status)}</button><div class="record-actions"><button class="edit" data-action="edit-action" data-id="${a.id}" title="Editar ação" aria-label="Editar ação">${editIcon}</button><button class="delete" data-action="delete-action" data-id="${a.id}" title="Excluir ação" aria-label="Excluir ação">${trashIcon}</button></div></article>`).join(''):empty('Nenhuma ação encontrada','Crie uma ação ou ajuste os filtros.');
 }
 function renderFinances(){
   const budget=finances.reduce((s,x)=>s+Number(x.budget),0),actual=finances.reduce((s,x)=>s+Number(x.actual),0),balance=budget-actual,headcount=finances.reduce((s,x)=>s+Number(x.headcount),0);
