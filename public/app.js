@@ -63,7 +63,6 @@ function bindEvents(){
   $('#forgot-password').addEventListener('click',forgotPassword);
   $('#new-password-form').addEventListener('submit',setNewPassword);
   $$('.password-toggle').forEach(button=>button.addEventListener('click',()=>togglePassword(button)));
-  $$('.password-toggle').forEach(button=>button.addEventListener('click',()=>togglePassword(button)));
   $('#logout-button').addEventListener('click',()=>supabase.auth.signOut());
   $$('.nav-item').forEach(button=>button.addEventListener('click',()=>switchView(button.dataset.view)));
   $$('[data-go]').forEach(button=>button.addEventListener('click',()=>switchView(button.dataset.go)));
@@ -81,14 +80,6 @@ function bindEvents(){
     if(target.dataset.action==='delete-action') deleteAction(target.dataset.id);
     if(target.dataset.action==='delete-finance') deleteFinance(target.dataset.id);
   });
-}
-
-function togglePassword(button){
-  const input=$(`#${button.dataset.passwordTarget}`); const showing=input.type==='text';
-  input.type=showing?'password':'text';
-  button.classList.toggle('showing',!showing);
-  button.setAttribute('aria-label',showing?'Mostrar senha':'Ocultar senha');
-  button.title=showing?'Mostrar senha':'Ocultar senha';
 }
 
 function togglePassword(button){
