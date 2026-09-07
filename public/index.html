@@ -8,6 +8,7 @@
   <title>CATALISA | Botuverá</title>
   <link rel="icon" href="/assets/logo-catalisa.png">
   <link rel="stylesheet" href="/styles.css">
+  <link rel="stylesheet" href="/overrides.css">
 </head>
 <body>
   <section id="loading-view" class="center-screen">
@@ -32,12 +33,12 @@
       </div>
       <form id="login-form" class="form-stack">
         <label>E-mail<input id="login-email" type="email" autocomplete="email" required placeholder="nome@botuvera.com.br"></label>
-        <label>Senha<input id="login-password" type="password" autocomplete="current-password" required minlength="6" placeholder="••••••••"></label>
+        <label>Senha<div class="password-field"><input id="login-password" type="password" autocomplete="current-password" required minlength="6" placeholder="••••••••"><button class="password-toggle" type="button" data-password-target="login-password" aria-label="Mostrar senha" title="Mostrar senha"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z"/><circle cx="12" cy="12" r="2.7"/></svg></button></div></label>
         <button class="button primary" type="submit">Entrar</button>
         <button class="link-button" id="forgot-password" type="button">Esqueci minha senha</button>
       </form>
       <form id="new-password-form" class="form-stack hidden">
-        <label>Nova senha<input id="new-password" type="password" autocomplete="new-password" required minlength="6" placeholder="Mínimo de 6 caracteres"></label>
+        <label>Nova senha<div class="password-field"><input id="new-password" type="password" autocomplete="new-password" required minlength="6" placeholder="Mínimo de 6 caracteres"><button class="password-toggle" type="button" data-password-target="new-password" aria-label="Mostrar senha" title="Mostrar senha"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z"/><circle cx="12" cy="12" r="2.7"/></svg></button></div></label>
         <button class="button primary" type="submit">Salvar nova senha</button>
       </form>
       <p class="auth-note">Acesso permitido somente a usuários autorizados.</p>
@@ -115,7 +116,7 @@
     <form id="action-form" class="modal-form">
       <div class="modal-head"><div><h2>Nova ação</h2><p>Selecione Todos quando envolver os três pilares.</p></div><button type="button" class="close-dialog icon-button">×</button></div>
       <label>Ação<input name="title" required></label>
-      <div class="form-grid"><label>Pilar<select name="pillar"><option value="Todos">Todos os pilares</option><option>Evolução</option><option>Desenvolvimento</option><option>Finanças</option></select></label><label>Prazo<input name="due" type="date" required></label></div>
+      <div class="form-grid"><label>Pilar<select name="pillar"><option value="Todos">Todos os pilares</option><option>Evolução</option><option>Desenvolvimento</option><option>Finanças</option></select></label><label>Data e horário<input name="due" type="datetime-local" required></label></div>
       <label>Responsável<input name="owner" required></label>
       <label>Economia estimada (R$)<input name="impact" type="number" min="0" step="0.01" value="0"></label>
       <label>Observação<textarea name="observation" rows="3" placeholder="Contexto, dependências ou informações adicionais"></textarea></label>
