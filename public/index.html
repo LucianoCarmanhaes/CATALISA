@@ -114,13 +114,13 @@
 
   <dialog id="action-dialog">
     <form id="action-form" class="modal-form">
-      <div class="modal-head"><div><h2>Nova ação</h2><p>Selecione Todos quando envolver os três pilares.</p></div><button type="button" class="close-dialog icon-button">×</button></div>
+      <div class="modal-head"><div><h2 id="action-dialog-title">Nova ação</h2><p>Selecione Todos quando envolver os três pilares.</p></div><button type="button" class="close-dialog icon-button">×</button></div>
       <label>Ação<input name="title" required></label>
       <div class="form-grid"><label>Pilar<select name="pillar"><option value="Todos">Todos os pilares</option><option>Evolução</option><option>Desenvolvimento</option><option>Finanças</option></select></label><label>Data e horário<input name="due" type="datetime-local" required></label></div>
       <label>Responsável<input name="owner" required></label>
       <label>Economia estimada (R$)<input name="impact" type="number" min="0" step="0.01" value="0"></label>
       <label>Observação<textarea name="observation" rows="3" placeholder="Contexto, dependências ou informações adicionais"></textarea></label>
-      <div class="modal-actions"><button type="button" class="button secondary close-dialog">Cancelar</button><button class="button primary" type="submit">Criar ação</button></div>
+      <div class="modal-actions"><button type="button" class="button secondary close-dialog">Cancelar</button><button id="action-submit" class="button primary" type="submit">Criar ação</button></div>
     </form>
   </dialog>
 
