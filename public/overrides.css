@@ -1,0 +1,64 @@
+.delete {
+  width: 40px;
+  height: 40px;
+  padding: 9px;
+  display: inline-grid;
+  place-items: center;
+  border: 1px solid #efc6c6;
+  background: #fff7f7;
+  color: #b42318;
+}
+
+.delete svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.delete:hover {
+  background: #ffe7e7;
+  border-color: #df9e9e;
+  color: #8f1711;
+}
+
+.password-field {
+  position: relative;
+}
+
+.password-field input {
+  padding-right: 48px;
+}
+
+.password-toggle {
+  position: absolute;
+  top: 50%;
+  right: 7px;
+  width: 36px;
+  height: 36px;
+  padding: 8px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: #66736b;
+}
+
+.password-toggle:hover,
+.password-toggle:focus-visible,
+.password-toggle.showing {
+  background: #e6f4e9;
+  color: #00642c;
+}
+
+.password-toggle svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
