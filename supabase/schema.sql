@@ -6,7 +6,7 @@ create table if not exists public.actions (
   title text not null check (char_length(title) between 1 and 200),
   pillar text not null check (pillar in ('Evolução','Desenvolvimento','Finanças','Todos')),
   owner text not null check (char_length(owner) between 1 and 150),
-  due date not null,
+  due timestamptz not null,
   observation text not null default '',
   status text not null default 'Não iniciada' check (status in ('Não iniciada','Em andamento','Atenção','Concluída')),
   progress integer not null default 0 check (progress between 0 and 100),
