@@ -23,15 +23,19 @@
   <div id="app-view" class="app-shell hidden">
     <aside class="sidebar" id="sidebar">
       <div class="brand"><img src="/assets/logo-catalisa.png" alt="CATALISA Botuverá"></div>
+      <div class="sidebar-user">
+        <span id="user-initials">AD</span>
+        <div><strong id="user-name">Administrador Catalisa</strong><small id="user-role">Administrador</small></div>
+        <button id="logout-button" class="logout-button" type="button" aria-label="Sair" title="Sair">↪</button>
+      </div>
       <nav aria-label="Navegação principal">
-        <button class="nav-item"><span>⌂</span>Visão geral</button>
+        <button class="nav-item" data-view="overview"><span>⌂</span>Visão geral</button>
         <p class="nav-label">Pilares</p>
         <button class="nav-item active" data-pillar="evolucao"><span>◉</span>Evolução</button>
         <button class="nav-item" data-pillar="desenvolvimento"><span>◇</span>Desenvolvimento</button>
         <button class="nav-item" data-pillar="financas"><span>R$</span>Finanças</button>
         <p class="nav-label">Acompanhamento</p>
-        <button class="nav-item"><span>▦</span>Cronograma</button>
-        <button class="nav-item"><span>✓</span>Todas as ações</button>
+        <button class="nav-item" data-view="schedule"><span>▦</span>Cronograma</button>
         <button class="nav-item" id="access-nav"><span>⚿</span>Usuários e acessos</button>
       </nav>
       <div class="cycle-card"><small>Ciclo 2026</small><strong>58% concluído</strong><div class="track"><i></i></div></div>
@@ -41,15 +45,13 @@
       <header class="topbar">
         <button class="menu" id="menu-button" aria-label="Abrir menu">☰</button>
         <div><span class="eyebrow">PROGRAMA CATALISA</span><h1 id="page-title">Pilar Evolução</h1></div>
-        <div class="user"><span id="user-initials">AD</span><div><strong id="user-name">Administrador CATALISA</strong><small id="user-role">Acesso total</small></div></div>
-        <button id="logout-button" class="logout-button" type="button" aria-label="Sair" title="Sair">↪</button>
       </header>
 
       <div class="content">
         <section id="dashboard-view">
         <section class="hero">
           <div><span class="eyebrow" id="pillar-kicker">PILAR 01</span><h2 id="pillar-title">Evolução</h2><p id="pillar-description">Desenvolvimento das pessoas, compartilhamento de conhecimento e fortalecimento das relações.</p></div>
-          <button class="primary" id="hero-new">+ Nova ação</button>
+          <div class="hero-actions"><button class="secondary" id="new-project">+ Novo projeto</button><button class="primary" id="hero-new">+ Nova ação</button></div>
         </section>
 
         <div class="pillar-tabs" role="tablist" aria-label="Pilares do programa">
@@ -70,12 +72,29 @@
         <section id="projects" class="projects" aria-live="polite"></section>
         </section>
 
+        <section id="overview-view" class="page-view hidden">
+          <div class="page-hero"><div><span class="eyebrow">VISÃO GERAL</span><h2>Dashboard do programa</h2><p>Indicadores consolidados dos três pilares.</p></div></div>
+          <section class="dashboard-metrics" id="overview-metrics"></section>
+          <section class="dashboard-grid">
+            <article class="dashboard-card"><div class="card-heading"><div><h3>Status das ações</h3><p>Distribuição atual do Kanban</p></div></div><div id="status-chart"></div></article>
+            <article class="dashboard-card"><div class="card-heading"><div><h3>Progresso por pilar</h3><p>Percentual médio de execução</p></div></div><div id="pillar-chart" class="bar-chart"></div></article>
+            <article class="dashboard-card dashboard-wide"><div class="card-heading"><div><h3>Próximas entregas</h3><p>Prazos mais próximos do programa</p></div></div><div id="next-deadlines" class="deadline-list"></div></article>
+          </section>
+        </section>
+
+        <section id="schedule-view" class="page-view hidden">
+          <div class="page-hero calendar-hero"><div><span class="eyebrow">CRONOGRAMA</span><h2>Calendário de ações</h2><p>Acompanhe prazos e etapas em suas respectivas datas.</p></div><div class="calendar-controls"><button id="calendar-prev" type="button" aria-label="Mês anterior">←</button><strong id="calendar-label"></strong><button id="calendar-next" type="button" aria-label="Próximo mês">→</button></div></div>
+          <article class="calendar-card"><div class="calendar-weekdays"><span>Seg</span><span>Ter</span><span>Qua</span><span>Qui</span><span>Sex</span><span>Sáb</span><span>Dom</span></div><div id="calendar-grid" class="calendar-grid"></div></article>
+          <section class="calendar-legend"><span><i class="evolucao"></i>Evolução</span><span><i class="desenvolvimento"></i>Desenvolvimento</span><span><i class="financas"></i>Finanças</span><span><i class="todos"></i>Todos os pilares</span></section>
+        </section>
+
         <section id="permissions-view" class="permissions-view hidden">
           <div class="permissions-hero"><div><span class="eyebrow">ADMINISTRAÇÃO</span><h2>Usuários e acessos</h2><p>Defina o perfil e o gestor vinculado de cada pessoa.</p></div><button class="primary" id="back-dashboard">Voltar ao painel</button></div>
           <section class="permission-rules"><article><strong>Administrador</strong><p>Visualiza e administra todo o painel.</p></article><article><strong>Gestor</strong><p>Visualiza o que iniciou com seus colaboradores.</p></article><article><strong>Colaborador</strong><p>Acompanha somente as próprias ações.</p></article></section>
           <article class="users-card"><div class="users-head"><div><h3>Base de usuários</h3><p>Permissões definidas individualmente.</p></div><span id="users-count">0 usuários</span></div><div class="users-table-wrap"><table><thead><tr><th>Usuário</th><th>Perfil de acesso</th><th>Gestor vinculado</th><th>Acesso</th></tr></thead><tbody id="users-table"></tbody></table></div></article>
         </section>
       </div>
+      <footer class="site-owner">CATALISA · Criado por Luciano Carmanhães</footer>
     </main>
   </div>
 
@@ -89,6 +108,16 @@
       <label>Observação<textarea name="observation" rows="3" placeholder="Contexto, dependências ou informações adicionais"></textarea></label>
       <label>Primeira atualização<textarea name="update" rows="3" placeholder="Registre o que já ocorreu"></textarea></label>
       <div class="modal-actions"><button type="button" class="secondary cancel-record">Cancelar</button><button type="submit" class="primary">Adicionar registro</button></div>
+    </form>
+  </dialog>
+  <dialog id="project-dialog">
+    <form id="project-form" class="record-form">
+      <div class="modal-head"><div><span class="eyebrow">NOVO PROJETO</span><h2>Adicionar ao pilar <span id="project-pillar">Evolução</span></h2></div><button type="button" class="icon-close close-project" aria-label="Fechar">×</button></div>
+      <label>Nome do projeto<input name="name" required maxlength="100" placeholder="Ex.: Formação de lideranças"></label>
+      <label>Descrição<textarea name="description" rows="3" required maxlength="500" placeholder="Explique o objetivo deste projeto"></textarea></label>
+      <label>Identificação curta<input name="icon" maxlength="3" placeholder="Ex.: FL"></label>
+      <label>Observação<textarea name="observation" rows="3" placeholder="Contexto ou informações adicionais"></textarea></label>
+      <div class="modal-actions"><button type="button" class="secondary cancel-project">Cancelar</button><button type="submit" class="primary">Adicionar projeto</button></div>
     </form>
   </dialog>
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
