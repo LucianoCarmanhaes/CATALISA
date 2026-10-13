@@ -136,7 +136,7 @@ function ingestRows(rows,stepRows,updateRows,collaboratorRows=[]){
   }
 }
 
-function visibleProjects(pillar){const allowed=pillar.projects.filter(project=>!(pillar.title==='Desenvolvimento'&&project.name.trim().toLocaleUpperCase('pt-BR')==='PDI'));return profile.role==='collaborator'?allowed.filter(project=>project.actions.length):allowed}
+function visibleProjects(pillar){const allowed=pillar.projects.filter(project=>!(pillar.title==='Desenvolvimento'&&project.name.trim().toLocaleUpperCase('pt-BR')==='PDI'&&!project.actions.length));return profile.role==='collaborator'?allowed.filter(project=>project.actions.length):allowed}
 function allActionsUnique(){const map=new Map();Object.values(pillars).forEach(pillar=>pillar.projects.forEach(project=>project.actions.forEach(action=>map.set(action.id,action))));return [...map.values()]}
 function stepMarkup(step,index,item){return `<label class="subaction"><input type="checkbox" data-step-action="${item.id}" data-step-index="${index}" ${step.done?'checked':''} ${userCanEdit(item)?'':'disabled'}><span><strong>${safe(step.title)}</strong><small>${safe(step.dateLabel)}</small></span></label>`}
 function updateMarkup(update){return `<div class="update-entry"><span>${safe(update.dateLabel)} · ${safe(update.author||'Usuário')}</span><p>${safe(update.text)}</p></div>`}
