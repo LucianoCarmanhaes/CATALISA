@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>CATALISA — Prévia por pilares</title>
+  <meta name="description" content="Demonstração local da organização do CATALISA por pilares, projetos, ações e subações.">
+  <link rel="icon" href="/assets/logo-catalisa.png">
+  <link rel="stylesheet" href="./kanban.css">
+</head>
+<body>
+  <section id="loading-view" class="center-screen"><div class="spinner" aria-label="Carregando"></div></section>
+  <section id="setup-view" class="center-screen hidden"><article class="auth-card"><img class="auth-logo" src="/assets/logo-catalisa.png" alt="CATALISA Botuverá"><h1>Configuração pendente</h1><p>Conecte o projeto ao Supabase para acessar.</p></article></section>
+  <section id="auth-view" class="auth-page hidden">
+    <article class="auth-card">
+      <img class="auth-logo" src="/assets/logo-catalisa.png" alt="CATALISA Botuverá">
+      <div class="auth-copy"><span class="eyebrow">Acesso restrito</span><h1>Entre no CATALISA</h1><p>Use seu e-mail e sua senha individual.</p></div>
+      <form id="login-form" class="form-stack"><label>E-mail<input id="login-email" type="email" autocomplete="email" required placeholder="nome@botuvera.com.br"></label><label>Senha<div class="password-field"><input id="login-password" type="password" autocomplete="current-password" required minlength="6" placeholder="••••••••"><button class="password-toggle" type="button" data-password-target="login-password" aria-label="Mostrar senha">◉</button></div></label><button class="primary" type="submit">Entrar</button><button class="link-button" id="forgot-password" type="button">Esqueci minha senha</button></form>
+      <form id="new-password-form" class="form-stack hidden"><div class="auth-copy"><h2>Crie sua senha</h2><p>Defina a senha que será usada nos próximos acessos.</p></div><label>Nova senha<div class="password-field"><input id="new-password" type="password" autocomplete="new-password" required minlength="6" placeholder="Mínimo de 6 caracteres"><button class="password-toggle" type="button" data-password-target="new-password" aria-label="Mostrar senha">◉</button></div></label><button class="primary" type="submit">Salvar nova senha</button></form>
+      <p class="auth-note">Acesso permitido somente a usuários autorizados.</p>
+    </article>
+  </section>
+  <div id="app-view" class="app-shell hidden">
+    <aside class="sidebar" id="sidebar">
+      <div class="brand"><img src="/assets/logo-catalisa.png" alt="CATALISA Botuverá"></div>
+      <nav aria-label="Navegação principal">
+        <button class="nav-item"><span>⌂</span>Visão geral</button>
+        <p class="nav-label">Pilares</p>
+        <button class="nav-item active" data-pillar="evolucao"><span>◉</span>Evolução</button>
+        <button class="nav-item" data-pillar="desenvolvimento"><span>◇</span>Desenvolvimento</button>
+        <button class="nav-item" data-pillar="financas"><span>R$</span>Finanças</button>
+        <p class="nav-label">Acompanhamento</p>
+        <button class="nav-item"><span>▦</span>Cronograma</button>
+        <button class="nav-item"><span>✓</span>Todas as ações</button>
+        <button class="nav-item" id="access-nav"><span>⚿</span>Usuários e acessos</button>
+      </nav>
+      <div class="cycle-card"><small>Ciclo 2026</small><strong>58% concluído</strong><div class="track"><i></i></div></div>
+    </aside>
+
+    <main class="workspace">
+      <header class="topbar">
+        <button class="menu" id="menu-button" aria-label="Abrir menu">☰</button>
+        <div><span class="eyebrow">PROGRAMA CATALISA</span><h1 id="page-title">Pilar Evolução</h1></div>
+        <div class="user"><span id="user-initials">AD</span><div><strong id="user-name">Administrador CATALISA</strong><small id="user-role">Acesso total</small></div></div>
+        <button id="logout-button" class="logout-button" type="button" aria-label="Sair" title="Sair">↪</button>
+      </header>
+
+      <div class="content">
+        <section id="dashboard-view">
+        <section class="hero">
+          <div><span class="eyebrow" id="pillar-kicker">PILAR 01</span><h2 id="pillar-title">Evolução</h2><p id="pillar-description">Desenvolvimento das pessoas, compartilhamento de conhecimento e fortalecimento das relações.</p></div>
+          <button class="primary" id="hero-new">+ Nova ação</button>
+        </section>
+
+        <div class="pillar-tabs" role="tablist" aria-label="Pilares do programa">
+          <button role="tab" aria-selected="true" data-pillar="evolucao"><span>◉</span><div><strong>Evolução</strong><small>3 projetos</small></div></button>
+          <button role="tab" aria-selected="false" data-pillar="desenvolvimento"><span>◇</span><div><strong>Desenvolvimento</strong><small>3 projetos</small></div></button>
+          <button role="tab" aria-selected="false" data-pillar="financas"><span>R$</span><div><strong>Finanças</strong><small>3 projetos</small></div></button>
+        </div>
+
+        <section class="metrics" aria-label="Resumo do pilar">
+          <article><small>Projetos</small><strong id="metric-projects">3</strong><span>neste pilar</span></article>
+          <article><small>Ações</small><strong id="metric-actions">8</strong><span>planejadas</span></article>
+          <article><small>Etapas</small><strong id="metric-subactions">20</strong><span>com datas</span></article>
+          <article><small>Progresso médio</small><strong id="metric-progress">62%</strong><div class="mini-track"><i id="metric-bar"></i></div></article>
+        </section>
+
+        <section class="access-summary" id="access-summary"><span>Administrador</span><p>Você está visualizando todos os pilares, projetos e ações.</p></section>
+        <div class="section-heading"><div><h3>Quadros de atuação</h3><p>Movimente cada ação no Kanban conforme o andamento e abra o cartão para consultar datas e registros.</p></div><span class="kanban-help">Arraste os cartões ou use as setas</span></div>
+        <section id="projects" class="projects" aria-live="polite"></section>
+        </section>
+
+        <section id="permissions-view" class="permissions-view hidden">
+          <div class="permissions-hero"><div><span class="eyebrow">ADMINISTRAÇÃO</span><h2>Usuários e acessos</h2><p>Defina o perfil e o gestor vinculado de cada pessoa.</p></div><button class="primary" id="back-dashboard">Voltar ao painel</button></div>
+          <section class="permission-rules"><article><strong>Administrador</strong><p>Visualiza e administra todo o painel.</p></article><article><strong>Gestor</strong><p>Visualiza o que iniciou com seus colaboradores.</p></article><article><strong>Colaborador</strong><p>Acompanha somente as próprias ações.</p></article></section>
+          <article class="users-card"><div class="users-head"><div><h3>Base de usuários</h3><p>Permissões definidas individualmente.</p></div><span id="users-count">0 usuários</span></div><div class="users-table-wrap"><table><thead><tr><th>Usuário</th><th>Perfil de acesso</th><th>Gestor vinculado</th><th>Acesso</th></tr></thead><tbody id="users-table"></tbody></table></div></article>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <dialog id="record-dialog">
+    <form id="record-form" class="record-form">
+      <div class="modal-head"><div><span class="eyebrow">NOVO ACOMPANHAMENTO</span><h2>Adicionar em <span id="record-project">PDI</span></h2></div><button type="button" class="icon-close" aria-label="Fechar">×</button></div>
+      <label>Nome do acompanhamento<input name="title" required placeholder="Ex.: PDI — Nome do colaborador"></label>
+      <div class="form-grid"><label>Data e horário principal<input name="due" type="datetime-local" required></label><fieldset class="collaborator-field"><legend>Colaboradores com acesso</legend><p>Selecione uma ou mais pessoas, ou marque Todos.</p><div id="collaborator-options" class="collaborator-options"></div><small id="collaborator-error" class="field-error hidden">Selecione pelo menos um colaborador ou a opção Todos.</small></fieldset></div>
+      <label>Abrangência<select name="scope"><option value="pillar">Somente este pilar</option><option value="Todos">Todos os pilares</option></select></label>
+      <label>Ações e datas para acompanhamento<textarea name="steps" rows="5" required placeholder="Uma ação por linha. Ex.: 20/10/2026 09:00 — Realizar reunião"></textarea></label>
+      <label>Observação<textarea name="observation" rows="3" placeholder="Contexto, dependências ou informações adicionais"></textarea></label>
+      <label>Primeira atualização<textarea name="update" rows="3" placeholder="Registre o que já ocorreu"></textarea></label>
+      <div class="modal-actions"><button type="button" class="secondary cancel-record">Cancelar</button><button type="submit" class="primary">Adicionar registro</button></div>
+    </form>
+  </dialog>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <div id="error-banner" class="error-banner hidden" role="alert"></div>
+  <script type="module" src="/catalisa-kanban.js"></script>
+</body>
+</html>

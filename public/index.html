@@ -36,7 +36,9 @@
         <button class="nav-item" data-pillar="financas"><span>R$</span>Finanças</button>
         <p class="nav-label">Acompanhamento</p>
         <button class="nav-item" data-view="schedule"><span>▦</span>Cronograma</button>
+        <button class="nav-item" data-view="achievements"><span>★</span>Conquistas</button>
         <button class="nav-item" id="access-nav"><span>⚿</span>Usuários e acessos</button>
+        <button class="nav-item" data-view="help"><span>?</span>Ajuda</button>
       </nav>
       <div class="cycle-card"><small>Ciclo 2026</small><strong>58% concluído</strong><div class="track"><i></i></div></div>
     </aside>
@@ -73,7 +75,7 @@
         </section>
 
         <section id="overview-view" class="page-view hidden">
-          <div class="page-hero"><div><span class="eyebrow">VISÃO GERAL</span><h2>Dashboard do programa</h2><p>Indicadores consolidados dos três pilares.</p></div></div>
+          <div class="page-hero"><div><span class="eyebrow">VISÃO GERAL</span><h2>Dashboard do programa</h2><p>Indicadores consolidados dos três pilares.</p></div><div class="overview-actions"><button class="secondary" id="my-deliveries" type="button">Minhas entregas</button><button class="primary" id="generate-report" type="button">▤ Gerar relatório / PDF</button></div></div>
           <section class="dashboard-metrics" id="overview-metrics"></section>
           <section class="dashboard-grid">
             <article class="dashboard-card"><div class="card-heading"><div><h3>Status das ações</h3><p>Distribuição atual do Kanban</p></div></div><div id="status-chart"></div></article>
@@ -88,25 +90,52 @@
           <section class="calendar-legend"><span><i class="evolucao"></i>Evolução</span><span><i class="desenvolvimento"></i>Desenvolvimento</span><span><i class="financas"></i>Finanças</span><span><i class="todos"></i>Todos os pilares</span></section>
         </section>
 
+        <section id="achievements-view" class="page-view hidden">
+          <div class="page-hero gamification-title"><div><span class="eyebrow">GAMIFICAÇÃO · PRÉVIA</span><h2>Conquistas CATALISA</h2><p>Reconhecimento pelo avanço real dos projetos, colaboração e constância nos acompanhamentos.</p></div><span class="preview-chip">Somente demonstração</span></div>
+          <section id="gamification-hero" class="gamification-hero"></section>
+          <section class="gamification-grid">
+            <article class="game-card missions-card"><div class="card-heading"><div><h3>Missões do ciclo</h3><p>Pequenos avanços que mantêm os projetos em movimento</p></div><span>Sem penalidades</span></div><div id="missions-list" class="missions-list"></div></article>
+            <article class="game-card"><div class="card-heading"><div><h3>Selos conquistados</h3><p>Marcos gerados automaticamente pelo trabalho registrado</p></div></div><div id="badges-list" class="badges-list"></div></article>
+          </section>
+          <article class="game-card leaderboard-card"><div class="card-heading"><div><h3>Ranking de impacto</h3><p id="leaderboard-scope">Pontuação calculada conforme a área que seu perfil pode visualizar</p></div><span id="participants-count"></span></div><div id="leaderboard" class="leaderboard"></div></article>
+          <article class="scoring-rules"><div><span>+100</span><p><strong>Ação concluída</strong>Entrega principal do projeto</p></div><div><span>+30</span><p><strong>Etapa concluída</strong>Avanço com data de acompanhamento</p></div><div><span>+15</span><p><strong>Atualização escrita</strong>Registro manual do que ocorreu</p></div><div><span>+10</span><p><strong>Ação em movimento</strong>Vale uma vez enquanto estiver ativa</p></div><div><span>+25</span><p><strong>Entrega acompanhada</strong>Reconhecimento ao gestor da ação</p></div></article>
+        </section>
+
         <section id="permissions-view" class="permissions-view hidden">
           <div class="permissions-hero"><div><span class="eyebrow">ADMINISTRAÇÃO</span><h2>Usuários e acessos</h2><p>Defina o perfil e o gestor vinculado de cada pessoa.</p></div><button class="primary" id="back-dashboard">Voltar ao painel</button></div>
+          <aside class="manager-link-notice"><span>✓</span><div><strong>Vínculo de gestor disponível para todos os perfis</strong><p>Administrador, gestor e colaborador podem ter um gestor vinculado. O sistema impede o vínculo da pessoa com ela mesma e mantém o gestor quando o perfil de acesso é alterado.</p></div></aside>
           <section class="permission-rules"><article><strong>Administrador</strong><p>Visualiza e administra todo o painel.</p></article><article><strong>Gestor</strong><p>Visualiza o que iniciou com seus colaboradores.</p></article><article><strong>Colaborador</strong><p>Acompanha somente as próprias ações.</p></article></section>
           <article class="users-card"><div class="users-head"><div><h3>Base de usuários</h3><p>Permissões definidas individualmente.</p></div><span id="users-count">0 usuários</span></div><div class="users-table-wrap"><table><thead><tr><th>Usuário</th><th>Perfil de acesso</th><th>Gestor vinculado</th><th>Acesso</th></tr></thead><tbody id="users-table"></tbody></table></div></article>
+        </section>
+
+        <section id="help-view" class="page-view help-view hidden">
+          <div class="page-hero"><div><span class="eyebrow">CENTRAL DE AJUDA</span><h2>Como preencher os campos</h2><p>Consulte o significado de cada informação antes de criar ou atualizar um registro.</p></div></div>
+          <nav class="help-shortcuts" aria-label="Atalhos da ajuda"><a href="#help-login">Acesso ao site</a><a href="#help-action">Nova ação</a><a href="#help-project">Novo projeto</a><a href="#help-access">Usuários e acessos</a><a href="#help-kanban">Acompanhamento</a></nav>
+          <div class="help-grid">
+            <article class="help-card" id="help-login"><span class="help-number">00</span><h3>Acesso ao site</h3><dl><div><dt>E-mail</dt><dd>Use o endereço cadastrado pelo administrador.</dd></div><div><dt>Senha</dt><dd>Digite sua senha individual; o botão ao lado permite visualizar ou ocultar os caracteres.</dd></div><div><dt>Esqueci minha senha</dt><dd>Digite primeiro o e-mail e solicite o link para criar uma nova senha.</dd></div><div><dt>Nova senha</dt><dd>Use no mínimo seis caracteres e guarde-a em local seguro.</dd></div></dl></article>
+            <article class="help-card" id="help-action"><span class="help-number">01</span><h3>Nova ação</h3><dl><div><dt>Nome do acompanhamento</dt><dd>Nome claro da iniciativa. Exemplo: “PDI — Vicente”.</dd></div><div><dt>Data e horário principal</dt><dd>Prazo principal para conclusão ou próxima revisão.</dd></div><div><dt>Colaboradores com acesso</dt><dd>Marque uma ou mais pessoas que acompanharão e poderão atualizar a ação. Use “Todos” quando o acompanhamento for aberto a todos os usuários.</dd></div><div><dt>Abrangência</dt><dd>Escolha “Somente este pilar” ou “Todos os pilares”.</dd></div><div><dt>Ações e datas</dt><dd>Digite uma etapa por linha no formato: 20/10/2026 09:00 — Realizar reunião.</dd></div><div><dt>Observação</dt><dd>Contexto, dependências, riscos ou orientações importantes.</dd></div><div><dt>Primeira atualização</dt><dd>Registro inicial do que já ocorreu. Depois, novas atualizações ficam no histórico do cartão.</dd></div><div><dt>Alerta por e-mail</dt><dd>Quando marcado, avisa os envolvidos três dias antes da data principal da ação.</dd></div></dl></article>
+            <article class="help-card" id="help-project"><span class="help-number">02</span><h3>Novo projeto</h3><dl><div><dt>Nome do projeto</dt><dd>Título que aparecerá dentro do pilar.</dd></div><div><dt>Descrição</dt><dd>Resumo do objetivo e do resultado esperado.</dd></div><div><dt>Identificação curta</dt><dd>Até três caracteres usados no ícone do projeto. Exemplo: “TI”.</dd></div><div><dt>Observação</dt><dd>Informações complementares para orientar quem utilizará o projeto.</dd></div></dl></article>
+            <article class="help-card" id="help-access"><span class="help-number">03</span><h3>Usuários e acessos</h3><dl><div><dt>Perfil de acesso</dt><dd>Administrador visualiza tudo; gestor acompanha as ações que iniciou; colaborador visualiza as ações em que foi incluído.</dd></div><div><dt>Gestor vinculado</dt><dd>Define o gestor responsável pelo acompanhamento. Administradores, gestores e colaboradores podem possuir esse vínculo.</dd></div><div><dt>Acesso</dt><dd>“Ativo” permite entrar no sistema; “Suspenso” bloqueia o acesso sem apagar o usuário.</dd></div></dl></article>
+            <article class="help-card" id="help-kanban"><span class="help-number">04</span><h3>Acompanhamento e Kanban</h3><dl><div><dt>Planejada</dt><dd>Ação criada, ainda sem início.</dd></div><div><dt>Em andamento</dt><dd>Ação em execução.</dd></div><div><dt>Atenção</dt><dd>Ação que precisa de decisão, apoio ou correção.</dd></div><div><dt>Concluída</dt><dd>Ação finalizada. Use as setas ou arraste o cartão para mudar de etapa.</dd></div><div><dt>Histórico</dt><dd>Registre o que aconteceu; cada atualização guarda autor, data e horário.</dd></div><div><dt>Conquistas</dt><dd>A pontuação é calculada pelos avanços, etapas concluídas e atualizações registradas.</dd></div></dl></article>
+          </div>
         </section>
       </div>
       <footer class="site-owner">CATALISA · Criado por Luciano Carmanhães</footer>
     </main>
   </div>
 
+  <section id="print-report" class="print-report" aria-hidden="true"></section>
+
   <dialog id="record-dialog">
     <form id="record-form" class="record-form">
       <div class="modal-head"><div><span class="eyebrow">NOVO ACOMPANHAMENTO</span><h2>Adicionar em <span id="record-project">PDI</span></h2></div><button type="button" class="icon-close" aria-label="Fechar">×</button></div>
       <label>Nome do acompanhamento<input name="title" required placeholder="Ex.: PDI — Nome do colaborador"></label>
-      <div class="form-grid"><label>Data e horário principal<input name="due" type="datetime-local" required></label><label>Colaborador com acesso<select name="collaborator" required></select></label></div>
+      <div class="form-grid"><label>Data e horário principal<input name="due" type="datetime-local" required></label><fieldset class="collaborator-field"><legend>Colaboradores com acesso</legend><p>Selecione uma ou mais pessoas, ou marque Todos.</p><div id="collaborator-options" class="collaborator-options"></div><small id="collaborator-error" class="field-error hidden">Selecione pelo menos um colaborador ou a opção Todos.</small></fieldset></div>
       <label>Abrangência<select name="scope"><option value="pillar">Somente este pilar</option><option value="Todos">Todos os pilares</option></select></label>
       <label>Ações e datas para acompanhamento<textarea name="steps" rows="5" required placeholder="Uma ação por linha. Ex.: 20/10/2026 09:00 — Realizar reunião"></textarea></label>
       <label>Observação<textarea name="observation" rows="3" placeholder="Contexto, dependências ou informações adicionais"></textarea></label>
       <label>Primeira atualização<textarea name="update" rows="3" placeholder="Registre o que já ocorreu"></textarea></label>
+      <label class="alert-option"><input name="email_alert" type="checkbox" checked><span><strong>Enviar alerta por e-mail 3 dias antes</strong><small>O aviso será enviado aos colaboradores vinculados à ação.</small></span></label>
       <div class="modal-actions"><button type="button" class="secondary cancel-record">Cancelar</button><button type="submit" class="primary">Adicionar registro</button></div>
     </form>
   </dialog>
