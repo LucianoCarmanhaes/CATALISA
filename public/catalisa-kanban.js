@@ -78,7 +78,7 @@ async function init(){
     return;
   }
   if(!SUPABASE_URL||!SUPABASE_ANON_KEY){show('setup-view');return}
-  supabase=createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
+  supabase=createClient(SUPABASE_URL,SUPABASE_ANON_KEY,{global:{fetch:(input,init={})=>fetch(input,{...init,cache:'no-store'})}});
   const {data}=await supabase.auth.getSession();session=data.session;
   supabase.auth.onAuthStateChange(async(event,newSession)=>{
     session=newSession;
